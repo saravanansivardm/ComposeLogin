@@ -7,29 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Building the APK
+  lint:
+    name: Generating Lint Files
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
-      - name: Checkout
+      - name: Checkout the code
         uses: actions/checkout@v2
-      - name: Restore Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-      - name: Assemble Debug
-        run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload html test report
         uses: actions/upload-artifact@v2
         with:
-          name: Authlogin.apk
-          path: app/build/outputs/apk/debug/**.apk
+          name: index.html
+          path: app/build/reports/lint-results-debug.html
