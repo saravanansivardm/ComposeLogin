@@ -1,10 +1,13 @@
-name: Build and Test
-
+name: AndroidBuild
 on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ feature-change-BG ]
   workflow_dispatch:
 
 jobs:
-  build_job:
+  build:
     name: Building the APK
     runs-on: ubuntu-latest
     continue-on-error: true
