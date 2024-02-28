@@ -5,12 +5,12 @@ on:
   push:
     branches: [ feature-change-BG ]
   workflow_dispatch:
-    inputs:
-      release_notes:
-        type: string
-        required: true
-        default: 'Manual Debug Build'
-        description: 'Release Notes'
+#    inputs:
+#      release_notes:
+#        type: string
+#        required: true
+#        default: 'Manual Debug Build'
+#        description: 'Release Notes'
 jobs:
   build:
     name: Building and distributing app
