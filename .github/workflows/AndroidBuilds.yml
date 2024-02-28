@@ -12,31 +12,26 @@ on:
         default: 'Manual Debug Build'
         description: 'Release Notes'
 jobs:
-  lint:
+  build:
     name: Building and distributing app
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3
         with:
-          distribution: "temurin"
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
-      # For Firebase App Distribution
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Change wrapper permissions
+      - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # For Firebase App Distribution
       - name: Execute Gradle command - assembleDebug
         run: ./gradlew assembleDebug
 
-      # For Firebase App Distribution
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
@@ -44,23 +39,3 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testersgroupmail
           file: app/build/outputs/apk/debug/app-debug.apk
-          releaseNotes: ${{ inputs.release_notes }}
-
-#      - name: Run Lint
-#        run: ./gradlew lintDebug
-#
-#      - name: Upload html test report
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: index.html
-#          path: app/build/reports/lint-results-debug.html
-#
-#      # For Building APK
-#      - name: Build debug APK
-#        run: ./gradlew build
-#
-#      - name: Upload APK
-#        uses: actions/upload-artifact@v4.3.0
-#        with:
-#          name: AuthLogin.apk
-#          path: app/build/outputs/apk/debug/app-debug.apk
