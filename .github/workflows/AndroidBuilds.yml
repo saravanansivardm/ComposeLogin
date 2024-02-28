@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Generating APK Files
+    name: Generating Lint Files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -23,7 +23,6 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      # For Lint
       - name: Run Lint
         run: ./gradlew lintDebug
 
