@@ -1,0 +1,43 @@
+name: AndroidBuild
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ feature-change-BG ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Generating Lint Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload html test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: index.html
+          path: app/build/reports/lint-results-debug.html
+
+      # For Building APK
+      - name: Build debug APK
+        run: ./gradlew build
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: AuthLogin.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
