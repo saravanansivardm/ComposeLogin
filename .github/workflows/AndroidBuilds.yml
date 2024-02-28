@@ -1,29 +1,47 @@
-name: Android CI
-
+name: AndroidBuild
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "feature-change-BG" ]
+    branches: [ main ]
+  push:
+    branches: [ feature-change-BG ]
+  workflow_dispatch:
 
 jobs:
-  build:
-
+  lint:
+    name: Generating Lint Files
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
+      - name: Checkout the code
+        uses: actions/checkout@v2
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: build release
-        run: ./gradlew assembleDebug
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload html test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: index.html
+          path: app/build/reports/lint-results-debug.html
+
+      # For Building APK
+      - name: Build debug APK
+        run: ./gradlew build
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: AuthLogin.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
         with:
