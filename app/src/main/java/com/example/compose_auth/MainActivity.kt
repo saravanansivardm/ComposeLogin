@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.Yellow
+        color = Color.Red
     ) {
         MainAppNavHost()
     }
