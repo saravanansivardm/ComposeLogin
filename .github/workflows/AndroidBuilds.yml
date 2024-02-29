@@ -26,15 +26,15 @@ jobs:
       - name: Auto Increment Version
         run: |
           # Increment version code
-          currentVersionCode=$(grep "versionCode" app/build.gradle | awk '{print $2}' | sed 's/[^0-9]*//g')
+          currentVersionCode=$(grep "versionCode" app/build.gradle.kts | awk '{print $2}' | sed 's/[^0-9]*//g')
           newVersionCode=$((currentVersionCode + 1))
-          sed -i "s/versionCode.*/versionCode $newVersionCode/" app/build.gradle
+          sed -i "s/versionCode.*/versionCode $newVersionCode/" app/build.gradle.kts
           
           # Increment version name
-          currentVersionName=$(grep "versionName" app/build.gradle | awk '{print $2}' | sed 's/"//g')
+          currentVersionName=$(grep "versionName" app/build.gradle.kts | awk '{print $2}' | sed 's/"//g')
           newVersionName="$((currentVersionName + 1))"
-          sed -i "s/versionName.*/versionName \"$newVersionName\"/" app/build.gradle
-          
+          sed -i "s/versionName.*/versionName \"$newVersionName\"/" app/build.gradle.kts
+
       # For Building APK
       - name: Build debug APK
         run: ./gradlew build
