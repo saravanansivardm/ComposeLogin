@@ -29,33 +29,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-        create("free") {
-            initWith(getByName("debug"))
-            manifestPlaceholders["hostName"] = "internal.example.com"
-            applicationIdSuffix = ".debugFree"
-        }
-        create("paid") {
-            initWith(getByName("debug"))
-            manifestPlaceholders["hostName"] = "internal.example.com"
-            applicationIdSuffix = ".debugPaid"
-        }
-    }
-    flavorDimensions += "flavour"
-    productFlavors {
-        create("demo") {
-            // Assigns this product flavor to the "flavour" flavor dimension.
-            // If you are using only one dimension, this property is optional,
-            // and the plugin automatically assigns all the module's flavors to
-            // that dimension.
-            dimension = "flavour"
-            applicationIdSuffix = ".demo"
-            versionNameSuffix = "-demo"
-        }
-        create("full") {
-            dimension = "flavour"
-            applicationIdSuffix = ".full"
-            versionNameSuffix = "-full"
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
