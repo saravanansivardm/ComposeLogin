@@ -32,7 +32,6 @@ jobs:
         with:
           name: index.html
           path: app/build/reports/lint-results-debug.html
-
       # For Building APK
       - name: Build debug APK
         run: ./gradlew build
