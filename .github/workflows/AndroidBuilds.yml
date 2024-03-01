@@ -25,8 +25,7 @@ jobs:
 
       - name: Bump Version Code
         run: |
-          latest_version="$(git describe --match "[0-9]*\.[0-9]*\.[0-9]*"
-              --abbrev=0 --tags)"
+          latest_version="$(git describe --match "[0-9]*\.[0-9]*\.[0-9]* --abbrev=0 --tags)"
           change_to="versionName "\"$latest_version"\""
           sed -i "0,/versionName/{s/.*versionName.*/$change_to/}"
               buffer-android-app/build.gradle.kts
