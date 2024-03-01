@@ -57,11 +57,11 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
         run: ./gradlew bundleRelease
       #3
-#      - name: Upload Release Build to Artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: release-artifacts
-#          path: ""
+      #      - name: Upload Release Build to Artifacts
+      #        uses: actions/upload-artifact@v3
+      #        with:
+      #          name: release-artifacts
+      #          path: ""
       #          path: app/release/app-release.apk
       #              app/release/app-release.aab
       #4
@@ -70,9 +70,9 @@ jobs:
         with:
           generate_release_notes: true
           prerelease: true
-          files: |
-            app/release/app-release.apk
-            app/release/app-release.aab
+          name: AuthLogin.apk
+          path: app/release/app-release.apk
+      #            app/release/app-release.aab
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
