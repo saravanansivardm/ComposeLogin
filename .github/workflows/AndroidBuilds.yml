@@ -23,17 +23,23 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Bump version code
-        uses: chkfung/android-version-actions@v1.1
-        with:
-          gradlePath: app/build.gradle.kts
-          versionCode: ${{github.run_number}}
-
-      - name: Bump version name
-        uses: chkfung/android-version-actions@v1.1
-        with:
-          gradlePath: app/build.gradle.kts
-          versionName: ${{github.run_number}}
+      - name: Bump Version Code
+        run: |
+            # Get the current version code
+            currentVersionCode=$(grep "versionCode" app/build.gradle.kts | awk '{print $2}' | sed 's/[^0-9]*//g')
+            
+            # Increment the version code
+            newVersionCode=$((currentVersionCode + 1))
+            
+            # Update the version code in build.gradle.kts
+            sed -i "s/versionCode.*/versionCode $newVersionCode/" app/build.gradle.kts
+            
+            # Commit the changes
+            git config --global user.email "actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git add app/build.gradle
+            git commit -m "Bump version code to $newVersionCode"
+            git push
 
       # For Building APK
       - name: Build debug APK
@@ -53,3 +59,4 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
           file: app/build/outputs/apk/debug/app-debug.apk
+
