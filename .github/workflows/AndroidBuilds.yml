@@ -61,8 +61,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-artifacts
-          path:
-            if-no-files-found: warn
+          path: ""
       #          path: app/release/app-release.apk
       #              app/release/app-release.aab
       #4
