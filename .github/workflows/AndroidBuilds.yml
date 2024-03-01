@@ -1,4 +1,4 @@
-name: ReleaseBuild
+name: AndroidBuild
 on:
   pull_request:
     branches: [ main ]
@@ -7,7 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  lint:
+    name: Generating Lint Files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -22,57 +23,24 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Cache Gradle and wrapper
-        uses: actions/cache@v2
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload html test report
+        uses: actions/upload-artifact@v2
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          name: index.html
+          path: app/build/reports/lint-results-debug.html
 
-      #1
-      - name: Decode Keystore
-        env:
-          ENCODED_STRING: ${{ secrets.SIGNING_KEY_STORE_BASE64 }}
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+      # For Building APK
+      - name: Build debug APK
+        run: ./gradlew build
 
-        run: |
-          echo $ENCODED_STRING > keystore-b64.txt
-          base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
-
-      #2
-      - name: Build Release apk
-        env:
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-        run: ./gradlew assembleRelease
-
-      - name: Build Release bundle
-        env:
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-        run: ./gradlew bundleRelease
-      #3
-      #      - name: Upload Release Build to Artifacts
-      #        uses: actions/upload-artifact@v3
-      #        with:
-      #          name: release-artifacts
-      #          path: ""
-      #          path: app/release/app-release.apk
-      #              app/release/app-release.aab
-      #4
-      - name: Create Github Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload APK
+        uses: actions/upload-artifact@v4.3.0
         with:
-          generate_release_notes: true
-          prerelease: true
           name: AuthLogin.apk
-          path: app/release/app-release.apk
-      #            app/release/app-release.aab
+          path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
@@ -81,5 +49,23 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: app/release/app-release.apk
+          file: app/build/outputs/apk/debug/app-debug.apk
 
+  notification_job:
+    needs: [ local_test_job, android_test_job, build_job ]
+    name: Notify Workflow Results
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v1
+      - name: Send mail
+        if: failure()
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Github Actions Job result
+          body: Build job of ${{github.repository}} completed successfully! The Job worflow ${{ github.workflow }} of ${{ github.repository }} has result of ${{ env.WORKFLOW_CONCLUSION }}
+          to: testuserpoiuy@gmail.com
+          from: From Github Action
