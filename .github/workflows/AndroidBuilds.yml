@@ -61,9 +61,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-artifacts
-          paths: |
-            app/release/app-release.apk
-            app/release/app-release.aab
+          path: app/release/app-release.apk
+#              app/release/app-release.aab
       #4
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
