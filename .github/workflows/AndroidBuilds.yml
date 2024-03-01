@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    name: Generating Lint Files
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -22,14 +21,6 @@ jobs:
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
-
-      - name: Bump Version Code
-        run: |
-          latest_version="$(git describe --match "[0-9]*\.[0-9]*\.[0-9]* --abbrev=0 --tags)"
-          change_to="versionName "\"$latest_version"\""
-          sed -i "0,/versionName/{s/.*versionName.*/$change_to/}"
-              buffer-android-app/build.gradle.kts
-          git commit -m "Bump version release for $latest_version" -a
 
       # For Building APK
       - name: Build debug APK
@@ -50,3 +41,14 @@ jobs:
           groups: testers
           file: app/build/outputs/apk/debug/app-debug.apk
 
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Bump version
+        uses: DoubleSymmetry/android-version-actions@v1.3
+        with:
+          gradlePath: app/build.gradle.kts
+          versionCode: ${{github.run_number}}
+          versionName: 1.0.0
