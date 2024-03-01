@@ -25,15 +25,13 @@ jobs:
 
       - name: Bump Version Code
         run: |
-            # Get the current version code
-            currentVersionCode=$(grep "versionCode" app/build.gradle.kts | awk '{print $2}' | sed 's/[^0-9]*//g')
-            
-            # Increment the version code
-            newVersionCode=$((currentVersionCode + 1))
-            
-            # Update the version code in build.gradle.kts
-            sed -i "s/versionCode.*/versionCode $newVersionCode/" app/build.gradle.kts
-            
+          latest_version="$(git describe --match "[0-9]*\.[0-9]*\.[0-9]*"
+              --abbrev=0 --tags)"
+          change_to="versionName "\"$latest_version"\""
+          sed -i "0,/versionName/{s/.*versionName.*/$change_to/}"
+              buffer-android-app/build.gradle.kts
+          git commit -m "Bump version release for $latest_version" -a
+
       # For Building APK
       - name: Build debug APK
         run: ./gradlew build
