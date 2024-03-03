@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ComposeLogin</string>
+    <string name="app_name">AuthLogin</string>
 
     <string name="jetpack_compose">Jetpack Compose</string>
 

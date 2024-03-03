@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -30,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -69,7 +70,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 
-
     // Android Ktx
     implementation("androidx.core:core-ktx:1.12.0")
 
@@ -100,4 +100,8 @@ dependencies {
 
     //Coil Image
     implementation("io.coil-kt:coil-compose:2.2.2")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-analytics")
 }

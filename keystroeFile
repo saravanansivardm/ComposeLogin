@@ -1,0 +1,4 @@
+storePassword=composelogin
+keyPassword=composelogin
+keyAlias=composelogin
+storeFile=D:\Github_Projects\Compose_Login\app\composeloginkeystorfile.jks
